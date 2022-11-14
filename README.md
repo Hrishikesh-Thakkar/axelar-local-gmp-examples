@@ -1,396 +1,80 @@
-# Axelar cross-chain dApp examples
+# Axelar Cross-Chain Example Walkthrough
+Developed a Basic Messaging Application which transfer aUSDC from one chain to another and stores the transaction receipt on chain.
+Referenced this [Tutorial Series](https://www.youtube.com/watch?v=PWXmsP_a-ck&list=PLh_q0hSKS_y23UECn5GJML0BDhJDDiiiL&index=19&ab_channel=Axelar) from the Axelar Official YouTube Channel.
 
-## Introduction
-
-This repo provides the code for several example dApps in the [Axelar Local Development Environment](https://github.com/axelarnetwork/axelar-local-dev). Examples contain both JavaScript and Solidity smart contract code.
-
-**Note:** Some example folders in this repo are not documented below.
-
-## One-time setup
-
-Install [nodejs](https://nodejs.org/en/download/). Run `node -v` to check your installation.
-
-Version 16 is required. If needed you can switch your node version (or lower, if you are on a higher version) via
-
-```bash
+## Setup Of The Project
+1. Clone the Project Using the Following Link:
+```
+git clone https://github.com/axelarnetwork/axelar-local-gmp-examples.git
+```
+2. Check the Node Version using node -v if it is not Version 16 then run the below lines:
+```
 sudo npm i -g n
 sudo n v16.15.0
 ```
-
-Clone this repo:
-
-```bash
-git clone https://github.com/axelarnetwork/axelar-local-gmp-examples.git
+3. Build contracts and tests:
 ```
-
-Build contracts and tests:
-
-```bash
 npm ci
 npm run build
 ```
-
-## Set up deployer key
-
-```bash
+4. Set Up Deployer Key And Insert the [EVM Private Key From MetaMask](https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-export-an-account-s-private-key#:~:text=On%20the%20account%20page%2C%20click,click%20%E2%80%9CConfirm%E2%80%9D%20to%20proceed.).
+```
 cp .env.example .env
 ```
-
-Then update to your own private key.
-
-## Deploy and test each example
-
-In order to run the examples against the local emulator, cd to `axelar-local-gmp-examples` and run
-
-```bash
+5. To Set up the Local Environment for Local Testing, Run this in a separate terminal window
+```
 node scripts/createLocal
 ```
+6. Go To info/testnet.json and replace the Ethereum Ropsten Infura RPC URL with Goerli RPC URL. Can be done on [Infura](https://app.infura.io/dashboard)
+7. Go to node_modules/@axelar-network/axelar-local-dev/info/testnet.json and remove Binance and replace the Ethereum Ropsten Infura RPC URL. Goerli RPC URL
+8. Then join the Discord For [Axelar Network](https://discord.com/invite/aRZ3Ra6f7D).
+9. Once there get Verified and Fetch Tokens from the Faucet Channel (Returns aUSDC based on the chain we require).
+10. Then go to each of the testnet Faucets and get the Native Tokens. (We need a good amount of tokens, a lot of them are needed)
+11. Then run the Deploy Script
+``` 
+node scripts/deploy examples/call-contract [local | testnet] (use either testnet or local depending on where you are at testing)
+```
+12. Now we can run the test function
+```
+node scripts/test examples/call-contract-with-token testnet "Moonbeam" "Avalanche" 1 0xBa86A5719722B02a5D5e388999C25f3333c7A9fb "Hello Axelar Network"
+```
+Here we are sending 1 aUSDC from our Moonbeam Wallet to the following Avalanche address 0xBa86A5719722B02a5D5e388999C25f3333c7A9fb. Along with the message "Hello Axelar Network". This can be the transaction description as well.
 
-Leave this node running on a separate terminal before deploying and testing the dApps.
-
-Each example has several arguments as described below:
-
-| Variable                                  | Valid Values                                       | Default                                                                                    | Example                                    | Notes                                                   |
-| ----------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------ | ------------------------------------------------------- |
-| network                                   | local, testnet                                     | no default                                                                                 | local                                      |                                                         |
-| source-chain                              | Moonbeam, Avalanche, Fantom, Ethereum, and Polygon | `Avalanche`                                                                                | "Moonbeam" or 'Moonbeam'                   | case-sensitive                                          |
-| destination-chain                         | Moonbeam, Avalanche, Fantom, Ethereum, and Polygon | `Fantom`                                                                                   | "Avalanche" or 'Avalanche'                 | case-sensitive                                          |
-| message for call-contract                 | any string                                         | `Hello ${destination.name} from ${source.name}, it is ${new Date().toLocaleTimeString()}.` | 'Hello World'                              |                                                         |
-| message for nonced-execution and send-ack | any string                                         | `Hello, the time is ${time}.`                                                              | 'Hello World'                              |                                                         |
-| amount                                    | integer or float                                   | `10`                                                                                       | 53                                         | Any non-integer is rounded down to the nearest integer. |
-| account                                   | any wallet address                                 | no default                                                                                 | 0xBa86A5719722B02a5D5e388999C25f3333c7A9fb | case-sensitive.                                         |
-
-Run the deploy and test code specific to each example described below.
-
-To use defaults, substitute `${}` for any or all of the variables.
-
-### Call contract
-
-Relay a message from source-chain to destination-chain.
-
-Deploy:
-
-```bash
-node scripts/deploy examples/call-contract [local|testnet]
+13. Once the transaction is executed we should be able to view them on [Axelar Network Testnet](https://testnet.axelarscan.io/gmp/0xd8894ed1e7f6d76701a3da2b81285d852e7810fd8dec0efd97d5a3c9ea1ea39c:12) as well as the [Source](https://moonbase.moonscan.io/tx/0xd8894ed1e7f6d76701a3da2b81285d852e7810fd8dec0efd97d5a3c9ea1ea39c) and [Destination](https://testnet.avascan.info/blockchain/c/tx/0x089212d614bf64ba028a1023bf5a06ac22046e42da15c4065f720176c22f7d23) Chains Testnets.
+Sample Response After Running the Test should be something similar as shown below.
+```
+[
+  '0xBa86A5719722B02a5D5e388999C25f3333c7A9fb',
+  '0x57F1c63497AEe0bE305B8852b354CEc793da43bB',
+  'Hello Axelar Network',
+  BigNumber { _hex: '0x0f4240', _isBigNumber: true },
+  recipient: '0xBa86A5719722B02a5D5e388999C25f3333c7A9fb',
+  tokenAddress: '0x57F1c63497AEe0bE305B8852b354CEc793da43bB',
+  message: 'Hello Axelar Network',
+  amount: BigNumber { _hex: '0x0f4240', _isBigNumber: true }
+]
 ```
 
-Run the test:
-
-```bash
-node scripts/test examples/call-contract [local|testnet] ${"source-chain"} ${"destination-chain"} ${'message'}
+## Approach To The Smart Contract
+In the DistributionExecutable.sol Contract I have modified the logic to store Transaction Receipts.
 ```
-
-#### Example
-
-```bash
-node scripts/deploy examples/call-contract local
-node scripts/test examples/call-contract local "Moonbeam" "Avalanche" 'Hello World'
+ struct TransactionReceipt {
+        address recipient;
+        address tokenAddress;
+        string message;
+        uint256 amount;
+    }
+mapping (address => TransactionReceipt[]) public addressReceiptMap;
 ```
-
-Output:
-
-```
---- Initially ---
-value at Avalanche is
---- After ---
-value at Avalanche is Hello World
-```
-
-### Call contract with token
-
-Send aUSDC from source-chain to destination-chain and distribute it equally among all accounts specified.
-
-Deploy:
-
-```bash
-node scripts/deploy examples/call-contract-with-token [local|testnet]
-```
-
-Run the test:
-
-```bash
-node scripts/test examples/call-contract-with-token [local|testnet] ${"source-chain"} ${"destination-chain"} ${amount} ${account} ${account2} ...
-```
-
-#### Example
-
-```bash
-node scripts/deploy examples/call-contract-with-token local
-node scripts/test examples/call-contract-with-token local "Moonbeam" "Ethereum" 100 0xBa86A5719722B02a5D5e388999C25f3333c7A9fb
-```
-
-Output:
-
-```
---- Initially ---
-0xBa86A5719722B02a5D5e388999C25f3333c7A9fb has 100 aUSDC
---- After ---
-0xBa86A5719722B02a5D5e388999C25f3333c7A9fb has 199 aUSDC
-```
-
-### Cross-chain token
-
-Mints some token at source-chain and send it to destination-chain.
-
-Deploy:
-
-```bash
-node scripts/deploy examples/cross-chain-token [local|testnet]
-```
-
-Run the test:
-
-```bash
-node scripts/test examples/cross-chain-token [local|testnet] ${"source-chain"} ${"destination-chain"} ${amount}
-```
-
-#### Example
-
-```bash
-node scripts/deploy examples/cross-chain-token local
-node scripts/test examples/cross-chain-token local "Ethereum" "Fantom" 1
-```
-
-Output:
-
-```
---- Initially ---
-Balance at Ethereum is 0
-Balance at Fantom is 0
---- After getting some token on the source chain ---
-Balance at Ethereum is 1
-Balance at Fantom is 0
---- After ---
-Balance at Ethereum is 0
-Balance at Fantom is 1
-```
-
-### Deposit address, send token
-
-Two different examples. Send aUSDC from source-chain to destination-chain:
-
-1. `deposit-address`: get an [Axelar deposit address](https://docs.axelar.dev/dev/tokens#get-a-deposit-address).
-2. `send-token`: call an [Axelar Gateway contract](https://docs.axelar.dev/dev/tokens#call-sendtoken).
-
-No smart contract to deploy for these examples.
-
-If running on `testnet` then ensure that `0xBa86A5719722B02a5D5e388999C25f3333c7A9fb` is funded with aUSDC.
-
-**Note:** We use `0xBa86A5719722B02a5D5e388999C25f3333c7A9fb` to deploy and test all examples. It's funded by default in the `local` environment when you run `createLocal`. To make sure that it's funded on all five supported testnets, run `node/printBalances`.
-
-Run the `deposit-address` test:
-
-```bash
-node scripts/test examples/deposit-address [local|testnet] ${"source-chain"} ${"destination-chain"} ${amount}
-```
-
-Run the `send-token` test:
-
-```bash
-node scripts/test examples/send-token [local|testnet] ${"source-chain"} ${"destination-chain"} ${amount}
-```
-
-#### Example
-
-```bash
-node scripts/test examples/deposit-address local
-node scripts/test examples/send-token local
-```
-
-Output:
-
-```
---- Initially ---
-Balance at Avalanche is 100000000
-Balance at Fantom is 100000000
-0xb54eA64537F3307907E06d3B93ccd4A3E711623f
---- After ---
-Balance at Avalanche is 90000000
-Balance at Fantom is 109000000
-```
-
-```
---- Initially ---
-Balance of 0xBa86A5719722B02a5D5e388999C25f3333c7A9fb at Avalanche is 90000000
-Balance of 0xBa86A5719722B02a5D5e388999C25f3333c7A9fb at Fantom is 109000000
---- After ---
-Balance of 0xBa86A5719722B02a5D5e388999C25f3333c7A9fb at Avalanche is 80000000
-Balance of 0xBa86A5719722B02a5D5e388999C25f3333c7A9fb at Fantom is 118000000
-```
-
-### Headers
-
-Informs destination-chain of the last header of source-chain.
-
-Deploy:
-
-```bash
-node scripts/deploy examples/headers [local|testnet]
-```
-
-Run the test:
-
-```bash
-node scripts/test examples/headers [local|testnet] ${"source-chain"} ${"destination-chain"}
-```
-
-#### Example
-
-```bash
-node scripts/deploy examples/headers local
-node scripts/test examples/headers local "Fantom" "Moonbeam"
-```
-
-Output:
-
-```
-Success!
-```
-
-### NFT linker
-
-Send the NFT that was originally minted at source-chain to destination-chain.
-
-Deploy:
-
-```bash
-node scripts/deploy examples/nft-linker [local|testnet]
-```
-
-A single NFT is minted to the deployer (`0xBa86A5719722B02a5D5e388999C25f3333c7A9fb`) on each chain.
-
-Run the test:
-
-```bash
-node scripts/test examples/nft-linker [local|testnet] ${"source-chain"} ${"destination-chain"}
-```
-
-It's not possible to send a duplicate NFT to a chain. The dApp fails when the NFT is already at the destination-chain.
-
-#### Example
-
-```bash
-node scripts/deploy examples/nft-linker local
-node scripts/test examples/nft-linker local "Avalanche" "Polygon"
-```
-
-Output:
-
-```
---- Initially ---
-Token that was originally minted at Moonbeam is at Moonbeam.
-Token that was originally minted at Avalanche is at Avalanche.
-Token that was originally minted at Fantom is at Fantom.
-Token that was originally minted at Ethereum is at Ethereum.
-Token that was originally minted at Polygon is at Polygon.
---- Then ---
-Token that was originally minted at Moonbeam is at Moonbeam.
-Token that was originally minted at Avalanche is at Polygon.
-Token that was originally minted at Fantom is at Fantom.
-Token that was originally minted at Ethereum is at Ethereum.
-Token that was originally minted at Polygon is at Polygon.
-```
-
-### Nonced execution
-
-Send a message from source-chain to destination-chain.
-
-Deploy:
-
-```bash
-node scripts/deploy examples/nonced-execution [local|testnet]
-```
-
-Run the test:
-
-```bash
-node scripts/test examples/nonced-execution [local|testnet] ${"source-chain"} ${"destination-chain"} ${'message'}
-```
-
-#### Example
-
-```bash
-node scripts/deploy examples/nonced-execution local
-node scripts/test examples/nonced-execution local ${} ${} ${}
-```
-
-Output:
-
-```
---- Initially ---
-Last message sent from Avalanche@0xBa86A5719722B02a5D5e388999C25f3333c7A9fb to Fantom was "" with a nonce of -1.
---- After ---
-Last message sent from Avalanche@0xBa86A5719722B02a5D5e388999C25f3333c7A9fb to Fantom was "Hello, the time is 1654191658288." with a nonce of 0.
-```
-
-### Send ack
-
-Send a message from source-chain to destination-chain.
-
-Deploy:
-
-```bash
-node scripts/deploy examples/send-ack [local|testnet]
-```
-
-Run the test:
-
-```bash
-node scripts/test examples/send-ack [local|testnet] ${"source-chain"} ${"destination-chain"} ${'message'}
-```
-
-#### Example
-
-```bash
-node scripts/deploy examples/send-ack local
-node scripts/test examples/send-ack local "Fantom" "Moonbeam" 'Received'
-```
-
-Output:
-
-```
---- Initially ---
-SendAckReceiverImplementation at Moonbeam has 0 messages and the last one is "".
---- After ---
-SendAckReceiverImplementation at Moonbeam has 1 messages and the last one is "Received".
-```
-
-### Cross-chain lending
-
-Supply collateral and borrow tokens from a satellite chain to a fork of Ethereum's mainnet using existing Compound Protocol. The script `scripts/createLocal` shouldn't be executed in order to run this test, the needed mainnet fork and the satellite chain are setup while running the test script.
-
-Deploy:
-
-No need for prior deployment. Everything is setup while running the test.
-
-Run the test:
-
-```bash
-node scripts/test examples/cross-chain-lending local
-```
-
-#### Example
-
-```bash
-node scripts/test examples/cross-chain-lending local
-```
-
-Output:
-
-```
------- Initial balances
-User WBCT balance 100000000000000000000
-User SUSHI balance 100000000000000000000
-CompoundInterface CWBCT balance 0
-CompoundInterface CSUSHI balance 0
------- Balances after supply and borrow
-User WBCT balance 99989999999999000000
-User SUSHI balance 100000000009999000000
-CompoundInterface CWBCT balance 494939543254751868
-CompoundInterface CSUSHI balance 0
------- Balances after repay and redeem
-User WBCT balance 99999999999997999999
-User SUSHI balance 99999999999998000000
-CompoundInterface CWBCT balance 1
-CompoundInterface CSUSHI balance 0
-```
+This above is the structure of the a Receipt. And then I kept a map which tracks all the reciepts for a given address on that chain. Eventually we can add a claim function which would allow that user to claim these tokens in bulk from the Smart Contract.
+
+## Challenges
+1. Faced some difficulty in understanding how to run the example projects provided. I had to make modifications for GasLimit and config changes in other node modules.
+2. Faced some issue getting aUSDC from the Faucet. Didn't know it was on Discord.
+3. There was a Network Issue I was facing since Ethereum RPC Infura URL was pointing to Ropsten not Goerli, had to make that change.
+4. Struggled a lot with CALL_EXCEPTIONS from running the test script. Turns out the I didn't have enough test tokens.
+
+## Positive Outcomes
+1. The project is trying to solve a very challenging problem and the examples are a great way to learn how things are working under the hood.
+2. Documentation and Videos are very well done. Some points may need to be updated.
+3. Was able to successfully see how cross chain messaging could work and the scope of it.
